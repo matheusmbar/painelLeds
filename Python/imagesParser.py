@@ -23,10 +23,23 @@ B = 2
 def addRootPath (rootPath, path):
     return (rootPath + "/" + path)
 
-
 def showImageBigger(im, size):
     im.resize(size, Image.NEAREST).show()
 
+def imageToString (im):
+    im2 = im.copy()
+    pix = im2.load()
+    image_height = im2.size[0]
+    image_length = im2.size[1]
+    image_string = ""
+    for y in range (0, image_height):
+        for x in range (0, image_length):
+            red = pix[x,y][R]
+            green = pix[x,y][G]
+            blue = pix[x,y][B]
+
+            image_string += str("{0:02X}{1:02X}{2:02X}".format(red, green, blue))
+    return image_string
 
 def flipEvenLines (im):
     im2 = im.copy()
@@ -125,10 +138,7 @@ for filename in to_convert_files:
 
     print (full_to_convert_path + "\t" + str(image_height) + " x " + str(image_length))
 
-
     im_display = resizeImageDisplay(im)
-    # showImageBigger(im_display, (300,300))
-    #im_display.save(full_to_output_path,"PNG")
 
     #create thumbnail
     im_resize_big = resizeImageThumb(im_display, (300,300))
@@ -136,24 +146,10 @@ for filename in to_convert_files:
 
     #prepare image to create string
     im_flip = flipEvenLines (im_display)
-    # showImageBigger(im_flip, (300,300))
 
-    pix = im_display.load()
-    image_height = im_display.size[0]
-    image_length = im_display.size[1]
-    image_string = ""
-    for y in range (0, image_height):
-        for x in range (0, image_length):
-            red = pix[x,y][R]
-            green = pix[x,y][G]
-            blue = pix[x,y][B]
-
-            image_string += str("{0:02X}{1:02X}{2:02X}".format(red, green, blue))
-
-    #save string on a file
     file_out_name = full_to_output_path.split('.')[0] + ".txt"
     file_out = open(file_out_name, 'w')
-    file_out.write(image_string)
+    file_out.write(imageToString(im_display))
     file_out.close()
 
 exit()
